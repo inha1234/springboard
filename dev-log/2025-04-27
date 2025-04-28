@@ -1,0 +1,20 @@
+한 일
+entity user, comment, post, postLike 생성
+깃허브 포르젝트 연동
+repository user, comment, post, postLike 생성
+H2 Database 연동
+
+
+1.문제
+원래 postLike의 원래 이름은 Like로 생성했었는데,
+like가 SQL에서 예약어라서 에러가 뜸
+
+1.해결
+like의 이름을 postLike로 변경으로 해결
+
+2.문제
+스프링 시큐리티를 미리 적용 시켜놨더니 여러가지 문제를 발생시킴
+
+2.해결
+설정 파일을 만들고 설정하는 거보다 일단 프로젝트를 진행하고 스프링 시큐리티를 제대로 사용하기 전까지 주석 처리하고
+나중에 설정 파일? 을 만들어서 설정하는 게 나을거같음

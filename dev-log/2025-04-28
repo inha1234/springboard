@@ -1,0 +1,18 @@
+한 일
+회원가입 기능을 만들기 위해서 DTO로 UserSingupDto를 만들었고,
+Repository를 만드는김에 comment, postLike, post의 Repository도 User랑 같이 만듬
+UserController로 회원가입 기능 api 줬고, 해당 기능 스웨거로 정상 작동하는가 시험해봄
+프로젝트 구조가 꼬여있어서 정리함.
+
+1.문제
+프로젝트의 구조가 이상하게 꼬여있어서 그거 정리했더니
+경로가 꼬여있어서 com.springboard.entity.Comment와
+com.springboard.springboard.entity.Comment가 있다고 꼬이게 잡힘
+원인을 알아보니 Hibernate가 옛날에 잘못 잡혀있던 구조를 컴파일해서 이 구조가 .class 파일이 build 폴더나 out 폴더에 남아있기 때문에
+스캔 대상으로 잡고있어서 라고함.
+
+1.해결
+소스 파일은 없지만,
+컴파일된 찌꺼기(.class 파일)가 남아 있는 문제를 하이버네티스가 인식하는 문제를 해결하기위해
+모든 빌드 파일을 다시 컴파일 하기위해 Ctrl + Shift + F9 단축키를 눌러서 프로젝트 전체 리빌드 수행함.
+이후 정상적으로 문제가 해결되고 프로젝트가 정상 실행됨

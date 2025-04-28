@@ -1,4 +1,4 @@
-package com.springboard.springboard.Entity;
+package com.springboard.entity;
 
 import jakarta.persistence.*;
 
