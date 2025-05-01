@@ -15,3 +15,7 @@ spring:
   h2:
     console:
       enabled: true
+---
+jwt:
+  secret: eTC7c0wlHf7QXdtQde2UGVab0rZVIU16jztlxm3VOmk=
+  expiration-time: 3600000 # 1시간 (밀리초 단위)
