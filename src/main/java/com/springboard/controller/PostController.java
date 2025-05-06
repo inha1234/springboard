@@ -4,6 +4,7 @@ import com.springboard.dto.post.PostRequestDto;
 import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,8 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@RequestBody @Valid PostRequestDto dto,
-            @RequestHeader("Authorization") String token) {
+                                                      HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         PostResponseDto responseDto = postService.createPost(dto, token);
         return ResponseEntity.ok(responseDto);
     }
@@ -37,16 +39,17 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long postId,
-            @RequestBody @Valid PostUpdateRequestDto dto,
-            @RequestHeader("Authorization") String token
-    ) {
+                                                      @RequestBody @Valid PostUpdateRequestDto dto,
+                                                      HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         PostResponseDto responseDto = postService.updatePost(postId, dto, token);
         return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<String> deletePost(@PathVariable Long postId,
-            @RequestHeader("Authorization") String token) {
+                                             HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         postService.deletePost(postId, token);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }

@@ -22,11 +22,35 @@ public class JwtUtil {
     }
 
 
-    public String generateToken(String username) {
+    //토큰 생성
+    public String generateToken(String username, String nickname) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("nickname", nickname)
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
                 .compact();
     }
+
+    //토큰에서 유저 네임 추출
+    public String getUsernameFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token.replace("Bearer ", ""))
+                .getBody()
+                .getSubject();
+    }
+
+    //토큰에서 유저 닉네임 추출
+    public String getNicknameFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token.replace("Bearer ", ""))
+                .getBody()
+                .get("nickname", String.class);
+    }
+
+
 }

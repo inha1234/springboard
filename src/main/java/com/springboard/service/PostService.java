@@ -5,6 +5,7 @@ import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
+import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
+    //게시글 작성
     public PostResponseDto createPost(PostRequestDto dto, String token){
-        // TODO: JWT 토큰에서 username 파싱하는 로직 추가 필요
-        String username = "user"; // 지금은 테스트용으로 임시 user 넣기
+        String username = jwtUtil.getUsernameFromToken(token);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
 
@@ -57,7 +59,7 @@ public class PostService {
     //게시글 수정
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, String token){
-        String username = "user"; // 지금은 테스트용으로 임시 user 넣기
+        String username = jwtUtil.getUsernameFromToken(token);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
@@ -74,7 +76,7 @@ public class PostService {
     //게시글 삭제
     @Transactional
     public void deletePost(Long postId, String token){
-        String username = "user"; // 지금은 테스트용으로 임시 user 넣기
+        String username = jwtUtil.getUsernameFromToken(token);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
