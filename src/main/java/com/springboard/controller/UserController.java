@@ -1,7 +1,7 @@
 package com.springboard.controller;
 
-import com.springboard.dto.UserLoginRequestDto;
-import com.springboard.dto.UserSignupDto;
+import com.springboard.dto.user.UserLoginRequestDto;
+import com.springboard.dto.user.UserSignupDto;
 import com.springboard.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

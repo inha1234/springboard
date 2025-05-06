@@ -1,7 +1,7 @@
 package com.springboard.service;
 
-import com.springboard.dto.UserLoginRequestDto;
-import com.springboard.dto.UserSignupDto;
+import com.springboard.dto.user.UserLoginRequestDto;
+import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
 import com.springboard.entity.User;

@@ -1,4 +1,4 @@
-package com.springboard.dto;
+package com.springboard.dto.post;
 
 import com.springboard.entity.Post;
 import lombok.Getter;

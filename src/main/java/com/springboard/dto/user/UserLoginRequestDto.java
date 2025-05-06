@@ -1,4 +1,4 @@
-package com.springboard.dto;
+package com.springboard.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

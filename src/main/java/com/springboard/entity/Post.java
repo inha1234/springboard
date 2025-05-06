@@ -52,4 +52,8 @@ public class Post {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 }
