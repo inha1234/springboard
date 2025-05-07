@@ -5,7 +5,6 @@ import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
-import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
     //게시글 작성
-    public PostResponseDto createPost(PostRequestDto dto, String token){
-        String username = jwtUtil.getUsernameFromToken(token);
+    public PostResponseDto createPost(PostRequestDto dto, String username){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
 
@@ -58,8 +55,7 @@ public class PostService {
 
     //게시글 수정
     @Transactional
-    public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, String token){
-        String username = jwtUtil.getUsernameFromToken(token);
+    public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, String username){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
@@ -75,8 +71,7 @@ public class PostService {
 
     //게시글 삭제
     @Transactional
-    public void deletePost(Long postId, String token){
-        String username = jwtUtil.getUsernameFromToken(token);
+    public void deletePost(Long postId, String username){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 

@@ -1,12 +1,14 @@
 package com.springboard.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,5 +41,25 @@ public class Comment {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public void setParent(Comment parent) {
+        this.parent = parent;
     }
 }

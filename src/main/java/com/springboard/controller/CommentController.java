@@ -1,0 +1,31 @@
+package com.springboard.controller;
+
+
+import com.springboard.dto.comment.CommentRequestDto;
+import com.springboard.dto.comment.CommentResponseDto;
+import com.springboard.jwt.JwtUtil;
+import com.springboard.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/posts/{postId}/comments")
+@RequiredArgsConstructor
+public class CommentController {
+    private final CommentService commentService;
+    private final JwtUtil jwtUtil;
+
+    @PostMapping
+    public ResponseEntity<CommentResponseDto> createComment(
+            @PathVariable Long postId,
+            @RequestBody @Valid CommentRequestDto dto,
+            HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = jwtUtil.getUsernameFromToken(token);
+        CommentResponseDto responseDto = commentService.createComment(postId, dto, username);
+        return ResponseEntity.ok(responseDto);
+    }
+}

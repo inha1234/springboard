@@ -3,6 +3,7 @@ package com.springboard.controller;
 import com.springboard.dto.post.PostRequestDto;
 import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
+import com.springboard.jwt.JwtUtil;
 import com.springboard.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@RequestBody @Valid PostRequestDto dto,
                                                       HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        PostResponseDto responseDto = postService.createPost(dto, token);
+        String username = jwtUtil.getUsernameFromToken(token);
+        PostResponseDto responseDto = postService.createPost(dto, username);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -42,7 +45,8 @@ public class PostController {
                                                       @RequestBody @Valid PostUpdateRequestDto dto,
                                                       HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        PostResponseDto responseDto = postService.updatePost(postId, dto, token);
+        String username = jwtUtil.getUsernameFromToken(token);
+        PostResponseDto responseDto = postService.updatePost(postId, dto, username);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -50,7 +54,8 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable Long postId,
                                              HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        postService.deletePost(postId, token);
+        String username = jwtUtil.getUsernameFromToken(token);
+        postService.deletePost(postId, username);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 }
