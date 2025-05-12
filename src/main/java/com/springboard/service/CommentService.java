@@ -2,6 +2,7 @@ package com.springboard.service;
 
 import com.springboard.dto.comment.CommentRequestDto;
 import com.springboard.dto.comment.CommentResponseDto;
+import com.springboard.dto.comment.CommentUpdateRequestDto;
 import com.springboard.entity.Comment;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
@@ -39,6 +40,22 @@ public class CommentService {
 
         commentRepository.save(comment);
 
+        return new CommentResponseDto(comment);
+    }
+
+    public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto dto, String username){
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
+
+        if(comment.isDeleted()){
+            throw new IllegalStateException("삭제된 댓글은 수정할 수 없습니다.");
+        }
+
+        if(!comment.getUser().getUsername().equals(username)){
+            throw new IllegalArgumentException("작성자만 댓글을 수정할 수 있습니다.");
+        }
+
+        comment.setContent(dto.getContent());
         return new CommentResponseDto(comment);
     }
 }
