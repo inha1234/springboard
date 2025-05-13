@@ -11,6 +11,7 @@ import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +58,17 @@ public class CommentService {
 
         comment.setContent(dto.getContent());
         return new CommentResponseDto(comment);
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId, String username){
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
+
+        if(!comment.getUser().getUsername().equals(username)){
+            throw new IllegalArgumentException("작성자만 댓글을 삭제할 수 있습니다.");
+        }
+
+        comment.setDeleted(true);
     }
 }

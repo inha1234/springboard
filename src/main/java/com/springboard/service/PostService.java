@@ -40,7 +40,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제되었습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
         return new PostResponseDto(post);
     }
 
@@ -56,8 +56,8 @@ public class PostService {
     //게시글 수정
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, String username){
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
 
         if (!post.getUser().getUsername().equals(username)) {
             throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
@@ -72,8 +72,8 @@ public class PostService {
     //게시글 삭제
     @Transactional
     public void deletePost(Long postId, String username){
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
 
         if (!post.getUser().getUsername().equals(username)) {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");

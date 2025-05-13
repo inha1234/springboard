@@ -39,4 +39,13 @@ public class CommentController {
         CommentResponseDto responseDto = commentService.updateComment(commentId, dto, username);
         return ResponseEntity.ok(responseDto);
     }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
+                                                HttpServletRequest request){
+        String token = request.getHeader("Authorization");
+        String username = jwtUtil.getUsernameFromToken(token);
+        commentService.deleteComment(commentId, username);
+        return ResponseEntity.ok("댓글이 삭제되었습니다.");
+    }
 }
