@@ -33,7 +33,7 @@ public class CommentService {
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         Comment parent = null;
-        if (dto.getParentId() != null) {
+        if (dto.getParentId() != null && dto.getParentId() > 0) {
             parent = commentRepository.findById(dto.getParentId())
                     .orElseThrow(() -> new IllegalArgumentException("부모 댓글이 존재하지 않습니다."));
         }
