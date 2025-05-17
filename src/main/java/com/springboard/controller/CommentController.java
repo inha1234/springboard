@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/posts/{postId}/comments")
 @RequiredArgsConstructor
@@ -29,6 +31,13 @@ public class CommentController {
         CommentResponseDto responseDto = commentService.createComment(postId, dto, username);
         return ResponseEntity.ok(responseDto);
     }
+
+    @GetMapping
+    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable Long postId){
+        List<CommentResponseDto> comments = commentService.getComment(postId);
+        return ResponseEntity.ok(comments);
+    }
+
 
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId,
