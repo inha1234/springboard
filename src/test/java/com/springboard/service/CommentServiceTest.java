@@ -1,5 +1,7 @@
 package com.springboard.service;
 
+import com.springboard.dto.comment.CommentRequestDto;
+import com.springboard.dto.comment.CommentResponseDto;
 import com.springboard.entity.Comment;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
@@ -10,12 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.given;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -42,17 +45,20 @@ public class CommentServiceTest {
         post.setContent("테스트 내용");
         post.setUser(user);
 
-        Comment comment = new Comment();
-        comment.setContent("댓글 내용");
-        comment.setPost(post);
-        comment.setUser(user);
+        CommentRequestDto dto = new CommentRequestDto();
+        dto.setContent("댓글 내용");
 
-        Mockito.when(commentRepository.findAll()).thenReturn(List.of(comment));
+        given(postRepository.findById(1L)).willReturn(Optional.of(post));
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(commentRepository.save(any(Comment.class))).willAnswer(invocation -> {
+            Comment saved = invocation.getArgument(0);
+            return saved;
+        });
 
-        List<Comment> comments = commentRepository.findAll();
-        assertThat(comments).hasSize(1);
-        assertThat(comments.get(0).getPost().getId()).isEqualTo(post.getId());
+        CommentResponseDto responseDto = commentService.createComment(1L, dto, user.getUsername());
 
+        assertThat(responseDto.getContent()).isEqualTo("댓글 내용");
+        assertThat(responseDto.getParentId()).isNull();
     }
 
 }
