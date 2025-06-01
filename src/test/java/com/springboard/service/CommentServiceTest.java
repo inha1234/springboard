@@ -1,5 +1,6 @@
 package com.springboard.service;
 
+import com.springboard.controller.CommentController;
 import com.springboard.dto.comment.CommentRequestDto;
 import com.springboard.dto.comment.CommentResponseDto;
 import com.springboard.entity.Comment;
@@ -9,11 +10,15 @@ import com.springboard.repository.CommentRepository;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
 
@@ -26,6 +31,7 @@ import static org.mockito.BDDMockito.given;
 public class CommentServiceTest {
     @InjectMocks
     private CommentService commentService;
+    private CommentController commentController;
     @Mock
     private CommentRepository commentRepository;
     @Mock
@@ -73,6 +79,7 @@ public class CommentServiceTest {
 
     @Test
     void 댓글_작성_성공_대댓글(){
+        ReflectionTestUtils.setField(comment, "id", 10L);
         Long parentCommentId = comment.getId();
 
         CommentRequestDto dto = new CommentRequestDto();
