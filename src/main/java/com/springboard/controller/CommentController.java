@@ -1,7 +1,7 @@
 package com.springboard.controller;
 
 
-import com.springboard.dto.comment.CommentRequestDto;
+import com.springboard.dto.comment.CommentCreateRequestDto;
 import com.springboard.dto.comment.CommentResponseDto;
 import com.springboard.dto.comment.CommentUpdateRequestDto;
 import com.springboard.jwt.JwtUtil;
@@ -24,7 +24,7 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommentResponseDto> createComment(
             @PathVariable Long postId,
-            @RequestBody @Valid CommentRequestDto dto,
+            @RequestBody @Valid CommentCreateRequestDto dto,
             HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String username = jwtUtil.getUsernameFromToken(token);

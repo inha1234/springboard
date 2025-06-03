@@ -1,6 +1,6 @@
 package com.springboard.controller;
 
-import com.springboard.dto.post.PostRequestDto;
+import com.springboard.dto.post.PostCreateRequestDto;
 import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.jwt.JwtUtil;
@@ -20,7 +20,7 @@ public class PostController {
     private final JwtUtil jwtUtil;
 
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody @Valid PostRequestDto dto,
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody @Valid PostCreateRequestDto dto,
                                                       HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         String username = jwtUtil.getUsernameFromToken(token);

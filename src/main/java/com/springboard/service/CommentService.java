@@ -1,6 +1,6 @@
 package com.springboard.service;
 
-import com.springboard.dto.comment.CommentRequestDto;
+import com.springboard.dto.comment.CommentCreateRequestDto;
 import com.springboard.dto.comment.CommentResponseDto;
 import com.springboard.dto.comment.CommentUpdateRequestDto;
 import com.springboard.entity.Comment;
@@ -25,7 +25,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public CommentResponseDto createComment(Long postId, CommentRequestDto dto, String username){
+    public CommentResponseDto createComment(Long postId, CommentCreateRequestDto dto, String username){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(()-> new IllegalArgumentException("작성자를 찾을 수 없습니다."));
 

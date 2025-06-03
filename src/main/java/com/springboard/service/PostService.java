@@ -1,6 +1,6 @@
 package com.springboard.service;
 
-import com.springboard.dto.post.PostRequestDto;
+import com.springboard.dto.post.PostCreateRequestDto;
 import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.entity.Post;
@@ -22,7 +22,7 @@ public class PostService {
     private final UserRepository userRepository;
 
     //게시글 작성
-    public PostResponseDto createPost(PostRequestDto dto, String username){
+    public PostResponseDto createPost(PostCreateRequestDto dto, String username){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
 
