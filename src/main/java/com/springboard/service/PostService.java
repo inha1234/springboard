@@ -22,6 +22,7 @@ public class PostService {
     private final UserRepository userRepository;
 
     //게시글 작성
+    @Transactional
     public PostResponseDto createPost(PostCreateRequestDto dto, String username){
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
