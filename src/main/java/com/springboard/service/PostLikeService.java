@@ -26,7 +26,7 @@ public class PostLikeService {
 
         boolean alreadyLiked = postLikeRepository.existsByPostAndUser(post, user);
         if (alreadyLiked) {
-            throw new IllegalStateException("이미 좋아요를 눌렀습니다");
+            throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
         }
 
         PostLike like = new PostLike(post, user);
@@ -35,4 +35,20 @@ public class PostLikeService {
 
     }
 
+    @Transactional
+    public void unLikePost(Long postId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+
+        PostLike postLike = postLikeRepository.findByPostAndUser(post, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글에 대한 좋아요 기록이 없습니다."));
+
+        postLikeRepository.delete(postLike);
+    }
+
+    public long getLikeCount(Long postId){
+        return postLikeRepository.countByPostId(postId);
+    }
 }
