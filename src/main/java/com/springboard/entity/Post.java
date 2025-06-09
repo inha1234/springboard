@@ -36,6 +36,8 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostLike> postLikes = new ArrayList<>();
 
+    private Long postLikeCount;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -55,5 +57,9 @@ public class Post {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public void setPostLikeCount(Long postLikeCount) {
+        this.postLikeCount = postLikeCount;
     }
 }

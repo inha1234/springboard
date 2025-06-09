@@ -16,6 +16,7 @@ public class PostLikeService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostService postService;
 
     @Transactional
     public void likePost(Long postId, String username) {
@@ -32,7 +33,7 @@ public class PostLikeService {
         PostLike like = new PostLike(post, user);
 
         postLikeRepository.save(like);
-
+        postService.postLikeCount(postId, getLikeCount(postId));
     }
 
     @Transactional
@@ -46,6 +47,15 @@ public class PostLikeService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글에 대한 좋아요 기록이 없습니다."));
 
         postLikeRepository.delete(postLike);
+    }
+
+    public boolean hasLiked(Long postId, String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+
+        return postLikeRepository.existsByPostAndUser(post, user);
     }
 
     public long getLikeCount(Long postId){

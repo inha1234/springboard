@@ -81,4 +81,14 @@ public class PostService {
         }
         post.setDeleted(true);
     }
+
+    @Transactional
+    public void postLikeCount(Long postId, Long postLikeCount){
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
+
+        post.setPostLikeCount(postLikeCount);
+
+        postRepository.save(post);
+    }
 }

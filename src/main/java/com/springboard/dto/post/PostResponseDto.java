@@ -9,11 +9,17 @@ public class PostResponseDto {
     private String title;
     private String content;
     private String authorUserNickname;
+    private boolean liked;
+    private long likeCount;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
         this.authorUserNickname = post.getUser().getNickname();
+        this.likeCount = post.getPostLikeCount();
+    }
+    public void setLiked(boolean liked) {
+        this.liked = liked;
     }
 }
