@@ -49,14 +49,6 @@ public class PostLikeService {
         postLikeRepository.delete(postLike);
     }
 
-    public boolean hasLiked(Long postId, String username){
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
-
-        return postLikeRepository.existsByPostAndUser(post, user);
-    }
 
     public long getLikeCount(Long postId){
         return postLikeRepository.countByPostId(postId);

@@ -5,6 +5,7 @@ import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
+import com.springboard.repository.PostLikeRepository;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostLikeRepository postLikeRepository;
 
     //게시글 작성
     @Transactional
@@ -39,9 +41,14 @@ public class PostService {
 
     //조회(단일)
     @Transactional(readOnly = true)
-    public PostResponseDto getPost(Long postId) {
+    public PostResponseDto getPost(Long postId, String username) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+        if(username!=null){
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+            post.setLiked(postLikeRepository.existsByPostAndUser(post, user));
+        }
         return new PostResponseDto(post);
     }
 

@@ -29,8 +29,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
-        PostResponseDto responseDto = postService.getPost(postId);
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId,
+                                                   HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = null;
+        if(token!=null){
+            username = jwtUtil.getUsernameFromToken(token);
+        }
+        PostResponseDto responseDto = postService.getPost(postId, username);
         return ResponseEntity.ok(responseDto);
     }
 

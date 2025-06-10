@@ -38,6 +38,9 @@ public class Post {
 
     private Long postLikeCount;
 
+    @Transient
+    private boolean liked;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -61,5 +64,9 @@ public class Post {
 
     public void setPostLikeCount(Long postLikeCount) {
         this.postLikeCount = postLikeCount;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
     }
 }
