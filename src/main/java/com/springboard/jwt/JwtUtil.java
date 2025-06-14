@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -32,6 +34,17 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateAccessToken(String username, String nickname){
+        Long time = 60L;
+
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("nickname", nickname)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime + time))
+                .signWith(key)
+                .compact();
+    }
+
     //토큰에서 유저 네임 추출
     public String getUsernameFromToken(String token) {
         return Jwts.parserBuilder()
@@ -51,6 +64,4 @@ public class JwtUtil {
                 .getBody()
                 .get("nickname", String.class);
     }
-
-
 }
