@@ -34,7 +34,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public String generateAccessToken(String username, String nickname){
+    public String generateRefreshToken(String username, String nickname){
         Long time = 60L;
 
         return Jwts.builder()

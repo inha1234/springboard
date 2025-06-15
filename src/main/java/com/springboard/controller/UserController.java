@@ -1,6 +1,7 @@
 package com.springboard.controller;
 
 import com.springboard.dto.user.UserLoginRequestDto;
+import com.springboard.dto.user.UserLoginResponseDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.service.UserService;
 import jakarta.validation.Valid;
@@ -23,8 +24,8 @@ public class UserController {
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
     }
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginRequestDto dto) {
-        String token = userService.login(dto);
+    public ResponseEntity<UserLoginResponseDto> login(@RequestBody @Valid UserLoginRequestDto dto) {
+        UserLoginResponseDto token = userService.login(dto);
         return ResponseEntity.ok(token);
     }
 }

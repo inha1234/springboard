@@ -1,6 +1,7 @@
 package com.springboard.service;
 
 import com.springboard.dto.user.UserLoginRequestDto;
+import com.springboard.dto.user.UserLoginResponseDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
@@ -28,14 +29,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public String login(UserLoginRequestDto dto) {
+    public UserLoginResponseDto login(UserLoginRequestDto dto) {
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getNickname());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
 
-        return jwtUtil.generateToken(user.getUsername(), user.getNickname());
+        UserLoginResponseDto responseDto = new UserLoginResponseDto(accessToken, refreshToken);
+
+        return responseDto;
     }
 }
