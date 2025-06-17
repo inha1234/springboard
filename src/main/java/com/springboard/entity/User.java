@@ -56,4 +56,8 @@ public class User {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 }

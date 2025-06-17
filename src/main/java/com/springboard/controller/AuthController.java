@@ -24,7 +24,7 @@ public class AuthController {
         String username = jwtUtil.getUsernameFromToken(refreshToken);
 
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
                 .orElseThrow(() -> new IllegalArgumentException("유저 정보가 유효하지 않습니다."));
 
         jwtUtil.validateToken(refreshToken);

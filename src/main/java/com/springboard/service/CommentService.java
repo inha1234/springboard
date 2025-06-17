@@ -27,7 +27,7 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentCreateRequestDto dto, String username){
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
                 .orElseThrow(()-> new IllegalArgumentException("작성자를 찾을 수 없습니다."));
 
         Post post = postRepository.findById(postId)

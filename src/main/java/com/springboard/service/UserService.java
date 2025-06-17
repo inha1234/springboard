@@ -20,6 +20,12 @@ public class UserService {
 
     @Transactional
     public void signup(UserSignupDto dto) {
+
+        userRepository.findByNicknameAndIsDeletedFalse(dto.getNickname())
+                .ifPresent(user -> {
+                    throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+                });
+
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -30,7 +36,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserLoginResponseDto login(UserLoginRequestDto dto) {
-        User user = userRepository.findByUsername(dto.getUsername())
+        User user = userRepository.findByUsernameAndIsDeletedFalse(dto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
@@ -42,5 +48,13 @@ public class UserService {
         UserLoginResponseDto responseDto = new UserLoginResponseDto(accessToken, refreshToken);
 
         return responseDto;
+    }
+
+    @Transactional
+    public void withdraw(String username) {
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        user.setDeleted(true);
     }
 }

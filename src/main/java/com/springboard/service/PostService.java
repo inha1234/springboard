@@ -26,7 +26,7 @@ public class PostService {
     //게시글 작성
     @Transactional
     public PostResponseDto createPost(PostCreateRequestDto dto, String username){
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
                 .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
 
         Post post = new Post();
@@ -45,7 +45,7 @@ public class PostService {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
         if(username!=null){
-            User user = userRepository.findByUsername(username)
+            User user = userRepository.findByUsernameAndIsDeletedFalse(username)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
             post.setLiked(postLikeRepository.existsByPostAndUser(post, user));
         }

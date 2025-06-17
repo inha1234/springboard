@@ -1,6 +1,5 @@
 package com.springboard.service;
 
-import com.springboard.controller.CommentController;
 import com.springboard.dto.comment.CommentCreateRequestDto;
 import com.springboard.dto.comment.CommentResponseDto;
 import com.springboard.dto.comment.CommentUpdateRequestDto;
@@ -66,7 +65,7 @@ public class CommentServiceTest {
         Long postId = 1L;
 
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
-        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameAndIsDeletedFalse(anyString())).willReturn(Optional.of(user));
 //        given(commentRepository.save(any(Comment.class))).willAnswer(invocation -> {
 //            Comment saved = invocation.getArgument(0);
 //            return saved;
@@ -91,7 +90,7 @@ public class CommentServiceTest {
         dto.setParentId(parentCommentId);
 
         given(postRepository.findById(postId)).willReturn(Optional.of(post));
-        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameAndIsDeletedFalse(anyString())).willReturn(Optional.of(user));
         given(commentRepository.findById(parentCommentId)).willReturn(Optional.of(comment));
 
         CommentResponseDto responseDto = commentService.createComment(postId, dto, user.getUsername());
@@ -109,7 +108,7 @@ public class CommentServiceTest {
         dto.setContent("댓글 내용");
 
         given(postRepository.findById(postId)).willReturn(Optional.empty());
-        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+        given(userRepository.findByUsernameAndIsDeletedFalse(anyString())).willReturn(Optional.of(user));
 
         assertThatThrownBy(() -> commentService.createComment(postId, dto, user.getUsername()))
                 .isInstanceOf(IllegalArgumentException.class)

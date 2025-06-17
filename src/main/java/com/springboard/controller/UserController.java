@@ -3,20 +3,20 @@ package com.springboard.controller;
 import com.springboard.dto.user.UserLoginRequestDto;
 import com.springboard.dto.user.UserLoginResponseDto;
 import com.springboard.dto.user.UserSignupDto;
+import com.springboard.jwt.JwtUtil;
 import com.springboard.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody @Valid UserSignupDto dto) {
@@ -27,5 +27,15 @@ public class UserController {
     public ResponseEntity<UserLoginResponseDto> login(@RequestBody @Valid UserLoginRequestDto dto) {
         UserLoginResponseDto token = userService.login(dto);
         return ResponseEntity.ok(token);
+    }
+
+
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<String> withdrawUser(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = jwtUtil.getUsernameFromToken(token);
+
+        userService.withdraw(username);
+        return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
     }
 }
