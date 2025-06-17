@@ -1,4 +1,4 @@
-# SpringBoard 📝
+# SpringBoard 📝(진행중)
 
 **SpringBoard**는 Java와 Spring Boot 기반으로 개발된 커뮤니티 게시판 백엔드 프로젝트입니다.  
 사용자는 회원가입 및 로그인 후 게시글을 작성하거나 댓글을 달 수 있으며, 댓글은 트리 구조(대댓글 포함)를 지원합니다.  
