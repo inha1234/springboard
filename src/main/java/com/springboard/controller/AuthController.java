@@ -35,4 +35,12 @@ public class AuthController {
 
         return ResponseEntity.ok(new UserLoginResponseDto(newAccessToken, newRefreshToken));
     }
+
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+
+        return ResponseEntity.ok("로그아웃 되었습니다.");
+    }
 }
