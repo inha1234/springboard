@@ -1,13 +1,17 @@
 package com.springboard.controller;
 
-import com.springboard.dto.user.UserLoginResponseDto;
+import com.springboard.dto.auth.AuthLoginRequestDto;
+import com.springboard.dto.auth.AuthLoginResponseDto;
 import com.springboard.entity.User;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
+import com.springboard.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,9 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final AuthService authService;
 
     @PostMapping("/reissue")
-    public ResponseEntity<UserLoginResponseDto> reissue(HttpServletRequest request) {
+    public ResponseEntity<AuthLoginResponseDto> reissue(HttpServletRequest request) {
         String refreshToken = request.getHeader("Refresh-Token");
         String username = jwtUtil.getUsernameFromToken(refreshToken);
 
@@ -33,9 +38,14 @@ public class AuthController {
         String newAccessToken = jwtUtil.generateToken(user.getUsername(), user.getNickname());
         String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
 
-        return ResponseEntity.ok(new UserLoginResponseDto(newAccessToken, newRefreshToken));
+        return ResponseEntity.ok(new AuthLoginResponseDto(newAccessToken, newRefreshToken));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<AuthLoginResponseDto> login(@RequestBody @Valid AuthLoginRequestDto dto) {
+        AuthLoginResponseDto token = authService.login(dto);
+        return ResponseEntity.ok(token);
+    }
 
 
     @PostMapping("/logout")

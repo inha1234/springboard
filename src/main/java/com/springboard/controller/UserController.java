@@ -1,7 +1,7 @@
 package com.springboard.controller;
 
-import com.springboard.dto.user.UserLoginRequestDto;
-import com.springboard.dto.user.UserLoginResponseDto;
+import com.springboard.dto.auth.AuthLoginRequestDto;
+import com.springboard.dto.auth.AuthLoginResponseDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.service.UserService;
@@ -23,12 +23,6 @@ public class UserController {
         userService.signup(dto);
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
     }
-    @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDto> login(@RequestBody @Valid UserLoginRequestDto dto) {
-        UserLoginResponseDto token = userService.login(dto);
-        return ResponseEntity.ok(token);
-    }
-
 
     @DeleteMapping("/withdraw")
     public ResponseEntity<String> withdrawUser(HttpServletRequest request) {
