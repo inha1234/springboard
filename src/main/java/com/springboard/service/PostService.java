@@ -1,6 +1,7 @@
 package com.springboard.service;
 
 import com.springboard.dto.post.PostCreateRequestDto;
+import com.springboard.dto.post.PostCustomPageDto;
 import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.entity.Post;
@@ -54,11 +55,12 @@ public class PostService {
 
     //조회(페이징)
     @Transactional(readOnly = true)
-    public Page<PostResponseDto> getPosts(Long page) {
+    public PostCustomPageDto<PostResponseDto> getPosts(Long page) {
         int size = 10;
         Pageable pageable = PageRequest.of(page.intValue(), size, Sort.by(Sort.Direction.DESC, "id"));
-        return postRepository.findAllByIsDeletedFalse(pageable)
+        Page<PostResponseDto> result = postRepository.findAllByIsDeletedFalse(pageable)
                 .map(PostResponseDto::new);
+        return new PostCustomPageDto<>(result);
     }
 
     //게시글 수정

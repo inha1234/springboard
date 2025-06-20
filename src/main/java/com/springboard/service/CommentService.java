@@ -30,7 +30,7 @@ public class CommentService {
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
                 .orElseThrow(()-> new IllegalArgumentException("작성자를 찾을 수 없습니다."));
 
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
         Comment parent = null;

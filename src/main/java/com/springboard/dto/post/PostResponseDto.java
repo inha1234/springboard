@@ -17,7 +17,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.authorUserNickname = post.getUser().getNickname();
-        this.likeCount = post.getPostLikeCount();
+        this.likeCount = post.getPostLikeCount() != null ? post.getPostLikeCount() : 0L;
     }
     public void setLiked(boolean liked) {
         this.liked = liked;

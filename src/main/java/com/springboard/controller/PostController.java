@@ -1,6 +1,7 @@
 package com.springboard.controller;
 
 import com.springboard.dto.post.PostCreateRequestDto;
+import com.springboard.dto.post.PostCustomPageDto;
 import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.jwt.JwtUtil;
@@ -41,8 +42,9 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<PostResponseDto>> getPosts(@RequestParam(defaultValue = "0") Long page) {
-        Page<PostResponseDto> response = postService.getPosts(page);
+    public ResponseEntity<PostCustomPageDto<PostResponseDto>> getPosts(@RequestParam(defaultValue = "1") Long page) {
+        Long adjustedPage = Math.max(0, page - 1);
+        PostCustomPageDto<PostResponseDto> response = postService.getPosts(adjustedPage);
         return ResponseEntity.ok(response);
     }
 

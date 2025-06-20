@@ -30,17 +30,19 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("nickname", nickname)
+                .claim("type", "access")
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
                 .compact();
     }
 
     public String generateRefreshToken(String username, String nickname){
-        Long time = 60L;
+        Long time = 30*60*1000L;
 
         return Jwts.builder()
                 .setSubject(username)
                 .claim("nickname", nickname)
+                .claim("type", "refresh")
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime + time))
                 .signWith(key)
                 .compact();
