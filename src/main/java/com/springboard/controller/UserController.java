@@ -2,6 +2,9 @@ package com.springboard.controller;
 
 import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
+import com.springboard.dto.post.PostCreateRequestDto;
+import com.springboard.dto.user.UserPasswordChangeDto;
+import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.service.UserService;
@@ -22,6 +25,24 @@ public class UserController {
     public ResponseEntity<String> signup(@RequestBody @Valid UserSignupDto dto) {
         userService.signup(dto);
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<Void> updateProfile(@RequestBody @Valid UserProfileUpdateRequestDto dto,
+                                              HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = jwtUtil.getUsernameFromToken(token);
+        userService.updateProfile(username, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid UserPasswordChangeDto dto,
+                                               HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = jwtUtil.getUsernameFromToken(token);
+        userService.changePassword(username, dto);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/withdraw")

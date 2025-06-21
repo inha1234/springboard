@@ -7,15 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserSignupDto {
-
-    @NotBlank(message = "아이디는 필수입니다.")
-    private String username;
-
-    @NotBlank(message = "비밀번호는 필수입니다.")
-    @Size(min = 6, message = "비밀번호는 최소 6자 이상이어야 합니다.")
-    private String password;
-
+public class UserProfileUpdateRequestDto {
     @NotBlank(message = "닉네임은 필수입니다.")
     @Size(max = 20, message = "닉네임은 20자 이하로 작성해주세요.")
     private String nickname;

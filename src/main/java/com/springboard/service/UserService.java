@@ -2,6 +2,9 @@ package com.springboard.service;
 
 import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
+import com.springboard.dto.post.PostCreateRequestDto;
+import com.springboard.dto.user.UserPasswordChangeDto;
+import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
@@ -32,6 +35,30 @@ public class UserService {
         user.setNickname(dto.getNickname());
 
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void updateProfile(String username, UserProfileUpdateRequestDto dto){
+        userRepository.findByNicknameAndIsDeletedFalse(dto.getNickname())
+                .ifPresent(otherUser -> {
+                    throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+                });
+
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        user.setNickname(dto.getNickname());
+
+    }
+
+    @Transactional
+    public void changePassword(String username, UserPasswordChangeDto dto){
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        String encoded = passwordEncoder.encode(dto.getPassword());
+        user.setPassword(encoded);
+
     }
 
     @Transactional
