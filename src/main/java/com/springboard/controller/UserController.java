@@ -1,6 +1,8 @@
 package com.springboard.controller;
 
+import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.user.UserPasswordChangeDto;
+import com.springboard.dto.user.UserProfileResponseDto;
 import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
@@ -22,6 +24,12 @@ public class UserController {
     public ResponseEntity<String> signup(@RequestBody @Valid UserSignupDto dto) {
         userService.signup(dto);
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserProfileResponseDto> getUserProfile(@PathVariable Long userId) {
+        UserProfileResponseDto response = userService.getUserProfile(userId);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/profile")

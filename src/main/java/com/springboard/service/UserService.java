@@ -4,6 +4,7 @@ import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
 import com.springboard.dto.post.PostCreateRequestDto;
 import com.springboard.dto.user.UserPasswordChangeDto;
+import com.springboard.dto.user.UserProfileResponseDto;
 import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
 import com.springboard.jwt.JwtUtil;
@@ -35,6 +36,14 @@ public class UserService {
         user.setNickname(dto.getNickname());
 
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileResponseDto getUserProfile(Long userId) {
+        User user = userRepository.findByIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        return new UserProfileResponseDto(user);
     }
 
     @Transactional
