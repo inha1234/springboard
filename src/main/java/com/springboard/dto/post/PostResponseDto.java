@@ -1,5 +1,6 @@
 package com.springboard.dto.post;
 
+import com.springboard.dto.user.UserSummaryDto;
 import com.springboard.entity.Post;
 import lombok.Getter;
 
@@ -8,7 +9,7 @@ public class PostResponseDto {
     private Long id;
     private String title;
     private String content;
-    private String authorUserNickname;
+    private UserSummaryDto author;;
     private boolean liked;
     private long likeCount;
 
@@ -16,7 +17,7 @@ public class PostResponseDto {
         this.id = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.authorUserNickname = post.getUser().getNickname();
+        this.author = new UserSummaryDto(post.getUser());
         this.likeCount = post.getPostLikeCount() != null ? post.getPostLikeCount() : 0L;
     }
     public void setLiked(boolean liked) {
