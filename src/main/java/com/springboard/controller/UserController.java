@@ -1,8 +1,5 @@
 package com.springboard.controller;
 
-import com.springboard.dto.auth.AuthLoginRequestDto;
-import com.springboard.dto.auth.AuthLoginResponseDto;
-import com.springboard.dto.post.PostCreateRequestDto;
 import com.springboard.dto.user.UserPasswordChangeDto;
 import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
@@ -31,7 +28,7 @@ public class UserController {
     public ResponseEntity<Void> updateProfile(@RequestBody @Valid UserProfileUpdateRequestDto dto,
                                               HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         userService.updateProfile(username, dto);
         return ResponseEntity.ok().build();
     }
@@ -40,7 +37,7 @@ public class UserController {
     public ResponseEntity<Void> changePassword(@RequestBody @Valid UserPasswordChangeDto dto,
                                                HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         userService.changePassword(username, dto);
         return ResponseEntity.ok().build();
     }
@@ -48,7 +45,7 @@ public class UserController {
     @DeleteMapping("/withdraw")
     public ResponseEntity<String> withdrawUser(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
 
         userService.withdraw(username);
         return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");

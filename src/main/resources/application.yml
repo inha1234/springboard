@@ -17,5 +17,6 @@ spring:
       enabled: true
 ---
 jwt:
-  secret: eTC7c0wlHf7QXdtQde2UGVab0rZVIU16jztlxm3VOmk=
+  secretAccessKey: eTC7c0wlHf7QXdtQde2UGVab0rZVIU16jztlxm3VOmk=
+  secretRefreshKey: ys1If+sHVaNZtoOildNWXp8Cu5ZsW+B6zQfzCd7pciE=
   expiration-time: 3600000 # 1시간 (밀리초 단위)

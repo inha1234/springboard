@@ -26,7 +26,7 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity<AuthLoginResponseDto> reissue(HttpServletRequest request) {
         String refreshToken = request.getHeader("Refresh-Token");
-        String username = jwtUtil.getUsernameFromToken(refreshToken);
+        String username = jwtUtil.getUsernameFromRefreshToken(refreshToken);
 
 
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
@@ -35,7 +35,7 @@ public class AuthController {
         jwtUtil.validateToken(refreshToken);
 
 
-        String newAccessToken = jwtUtil.generateToken(user.getUsername(), user.getNickname());
+        String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getNickname());
         String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
 
         return ResponseEntity.ok(new AuthLoginResponseDto(newAccessToken, newRefreshToken));

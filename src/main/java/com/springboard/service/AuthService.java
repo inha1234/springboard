@@ -25,7 +25,7 @@ public class AuthService {
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getNickname());
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getNickname());
         String refreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
 
         AuthLoginResponseDto responseDto = new AuthLoginResponseDto(accessToken, refreshToken);

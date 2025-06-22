@@ -27,7 +27,7 @@ public class CommentController {
             @RequestBody @Valid CommentCreateRequestDto dto,
             HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         CommentResponseDto responseDto = commentService.createComment(postId, dto, username);
         return ResponseEntity.ok(responseDto);
     }
@@ -44,7 +44,7 @@ public class CommentController {
                                                             @RequestBody @Valid CommentUpdateRequestDto dto,
                                                             HttpServletRequest request){
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         CommentResponseDto responseDto = commentService.updateComment(commentId, dto, username);
         return ResponseEntity.ok(responseDto);
     }
@@ -53,7 +53,7 @@ public class CommentController {
     public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
                                                 HttpServletRequest request){
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         commentService.deleteComment(commentId, username);
         return ResponseEntity.ok("댓글이 삭제되었습니다.");
     }

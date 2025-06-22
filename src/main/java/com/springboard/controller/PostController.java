@@ -9,7 +9,6 @@ import com.springboard.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class PostController {
     public ResponseEntity<PostResponseDto> createPost(@RequestBody @Valid PostCreateRequestDto dto,
                                                       HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         PostResponseDto responseDto = postService.createPost(dto, username);
         return ResponseEntity.ok(responseDto);
     }
@@ -35,7 +34,7 @@ public class PostController {
         String token = request.getHeader("Authorization");
         String username = null;
         if(token!=null){
-            username = jwtUtil.getUsernameFromToken(token);
+            username = jwtUtil.getUsernameFromAccessToken(token);
         }
         PostResponseDto responseDto = postService.getPost(postId, username);
         return ResponseEntity.ok(responseDto);
@@ -53,7 +52,7 @@ public class PostController {
                                                       @RequestBody @Valid PostUpdateRequestDto dto,
                                                       HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         PostResponseDto responseDto = postService.updatePost(postId, dto, username);
         return ResponseEntity.ok(responseDto);
     }
@@ -62,7 +61,7 @@ public class PostController {
     public ResponseEntity<String> deletePost(@PathVariable Long postId,
                                              HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
         postService.deletePost(postId, username);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }

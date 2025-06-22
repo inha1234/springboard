@@ -8,31 +8,32 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 @Component
 public class JwtUtil {
 
     @Value("${jwt.expiration-time}")
     private final long expirationTime;
-    private final Key key;
-    public JwtUtil(@Value("${jwt.secret}") String secretKeyString,
+    private final Key accessKey;
+    private final Key refreshKey;
+    public JwtUtil(@Value("${jwt.secretAccessKey}") String secretAccessKeyString,
+                   @Value("${jwt.secretRefreshKey}") String secretRefreshKeyString,
             @Value("${jwt.expiration-time}") long expirationTime) {
         this.expirationTime = expirationTime;
-        this.key = Keys.hmacShaKeyFor(secretKeyString.getBytes());
+        this.accessKey = Keys.hmacShaKeyFor(secretAccessKeyString.getBytes());
+        this.refreshKey = Keys.hmacShaKeyFor(secretRefreshKeyString.getBytes());
     }
 
 
     //토큰 생성
-    public String generateToken(String username, String nickname) {
+    public String generateAccessToken(String username, String nickname) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("nickname", nickname)
                 .claim("type", "access")
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(key)
+                .signWith(accessKey)
                 .compact();
     }
 
@@ -44,14 +45,23 @@ public class JwtUtil {
                 .claim("nickname", nickname)
                 .claim("type", "refresh")
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime + time))
-                .signWith(key)
+                .signWith(refreshKey)
                 .compact();
     }
 
     //토큰에서 유저 네임 추출
-    public String getUsernameFromToken(String token) {
+    public String getUsernameFromAccessToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(accessKey)
+                .build()
+                .parseClaimsJws(token.replace("Bearer ", ""))
+                .getBody()
+                .getSubject();
+    }
+
+    public String getUsernameFromRefreshToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(refreshKey)
                 .build()
                 .parseClaimsJws(token.replace("Bearer ", ""))
                 .getBody()
@@ -61,7 +71,7 @@ public class JwtUtil {
     //토큰에서 유저 닉네임 추출
     public String getNicknameFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(accessKey)
                 .build()
                 .parseClaimsJws(token.replace("Bearer ", ""))
                 .getBody()
@@ -71,7 +81,7 @@ public class JwtUtil {
     public void validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(accessKey)
                     .build()
                     .parseClaimsJws(token.replace("Bearer ", ""));
         } catch (JwtException e) {

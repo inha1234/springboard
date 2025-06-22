@@ -18,7 +18,7 @@ public class PostLikeController {
     public ResponseEntity<?> likePost(@PathVariable Long postId,
                                       HttpServletRequest request){
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
 
         postLikeService.likePost(postId, username);
         return ResponseEntity.ok("좋아요가 등록되었습니다.");
@@ -28,7 +28,7 @@ public class PostLikeController {
     public ResponseEntity<?> unlikePost(@PathVariable Long postId,
                                         HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromToken(token);
+        String username = jwtUtil.getUsernameFromAccessToken(token);
 
         postLikeService.unLikePost(postId, username);
         return ResponseEntity.ok("좋아요가 취소되었습니다.");
