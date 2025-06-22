@@ -1,10 +1,12 @@
-package com.springboard.config;
+package com.springboard.test;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+@Profile("local")
 @Component
 @RequiredArgsConstructor
 public class RedisTestRunner implements CommandLineRunner {
