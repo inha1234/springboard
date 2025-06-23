@@ -25,20 +25,12 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity<AuthLoginResponseDto> reissue(HttpServletRequest request) {
-        String refreshToken = request.getHeader("Refresh-Token");
+        String refreshToken = request.getHeader("Authorization");
         String username = jwtUtil.getUsernameFromRefreshToken(refreshToken);
 
+        AuthLoginResponseDto token = authService.reissue(username);
 
-        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 유효하지 않습니다."));
-
-        jwtUtil.validateToken(refreshToken);
-
-
-        String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getNickname());
-        String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
-
-        return ResponseEntity.ok(new AuthLoginResponseDto(newAccessToken, newRefreshToken));
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/login")

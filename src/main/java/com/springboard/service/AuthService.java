@@ -32,4 +32,15 @@ public class AuthService {
 
         return responseDto;
     }
+
+    @Transactional
+    public AuthLoginResponseDto reissue(String username) {
+        User user = userRepository.findByUsernameAndIsDeletedFalse(username)
+                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 유효하지 않습니다."));
+
+        String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getNickname());
+        String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
+
+        return new AuthLoginResponseDto(newAccessToken, newRefreshToken);
+    }
 }
