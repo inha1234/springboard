@@ -2,9 +2,7 @@ package com.springboard.controller;
 
 import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
-import com.springboard.entity.User;
 import com.springboard.jwt.JwtUtil;
-import com.springboard.repository.UserRepository;
 import com.springboard.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
     private final AuthService authService;
 
     @PostMapping("/reissue")
@@ -42,6 +39,13 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        String username = jwtUtil.getUsernameFromAccessToken(token);
+
+        token = token.replace("Bearer ", "");
+        long expiration = jwtUtil.getExpiration(token); // 남은 유효 시간(ms 단위)
+
+        authService.blacklistToken(token, expiration);
 
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }

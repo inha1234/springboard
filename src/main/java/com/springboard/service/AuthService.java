@@ -6,9 +6,12 @@ import com.springboard.entity.User;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final StringRedisTemplate redisTemplate;
 
     @Transactional(readOnly = true)
     public AuthLoginResponseDto login(AuthLoginRequestDto dto) {
@@ -42,5 +46,14 @@ public class AuthService {
         String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
 
         return new AuthLoginResponseDto(newAccessToken, newRefreshToken);
+    }
+
+    public void blacklistToken(String token, long expirationMillis) {
+        redisTemplate.opsForValue().set(token, "blacklisted", expirationMillis, TimeUnit.MILLISECONDS);
+    }
+
+
+    public boolean isBlacklisted(String token) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 }

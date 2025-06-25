@@ -78,6 +78,17 @@ public class JwtUtil {
                 .get("nickname", String.class);
     }
 
+    public long getExpiration(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(accessKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+
+        return expiration.getTime() - System.currentTimeMillis();
+    }
+
 //    public void validateToken(String token) {
 //        try {
 //            Jwts.parserBuilder()
