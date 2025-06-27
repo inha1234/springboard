@@ -43,7 +43,7 @@ public class AuthController {
         String username = jwtUtil.getUsernameFromAccessToken(token);
 
         token = token.replace("Bearer ", "");
-        long expiration = jwtUtil.getExpiration(token); // 남은 유효 시간(ms 단위)
+        long expiration = jwtUtil.getExpiration(token);
 
         authService.blacklistToken(token, expiration);
 
