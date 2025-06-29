@@ -1,7 +1,6 @@
 package com.springboard.jwt;
 
 
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,9 +77,20 @@ public class JwtUtil {
                 .get("nickname", String.class);
     }
 
-    public long getExpiration(String token) {
+    public long getAccessTokenExpiration(String token) {
         Date expiration = Jwts.parserBuilder()
                 .setSigningKey(accessKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+
+        return expiration.getTime() - System.currentTimeMillis();
+    }
+
+    public long getRefreshTokenExpiration(String token) {
+        Date expiration = Jwts.parserBuilder()
+                .setSigningKey(refreshKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()

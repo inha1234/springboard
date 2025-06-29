@@ -38,6 +38,16 @@ public class AuthController {
 
         AuthLoginResponseDto token = authService.reissue(refreshTokenUsername);
 
+        accessToken = accessToken.replace("Bearer ", "");
+        long accessTokenExpiration = jwtUtil.getAccessTokenExpiration(accessToken);
+
+        authService.blacklistToken(accessToken, accessTokenExpiration);
+
+        refreshToken = refreshToken.replace("Bearer ", "");
+        long refreshTokenExpiration = jwtUtil.getRefreshTokenExpiration(refreshToken);
+
+        authService.blacklistToken(refreshToken, refreshTokenExpiration);
+
         return ResponseEntity.ok(token);
     }
 
@@ -51,10 +61,10 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromAccessToken(token);
+        jwtUtil.getUsernameFromAccessToken(token);
 
         token = token.replace("Bearer ", "");
-        long expiration = jwtUtil.getExpiration(token);
+        long expiration = jwtUtil.getAccessTokenExpiration(token);
 
         authService.blacklistToken(token, expiration);
 
