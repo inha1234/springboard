@@ -25,7 +25,7 @@ public class SwaggerConfig {
                         .addSecuritySchemes("RefreshToken", new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
-                                .name("Refresh-Token")
+                                .name("RefreshToken")
                                 .description("Refresh Token 입력")))
                 .addSecurityItem(new SecurityRequirement()
                         .addList("AccessToken")

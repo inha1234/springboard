@@ -22,10 +22,21 @@ public class AuthController {
 
     @PostMapping("/reissue")
     public ResponseEntity<AuthLoginResponseDto> reissue(HttpServletRequest request) {
-        String refreshToken = request.getHeader("Authorization");
-        String username = jwtUtil.getUsernameFromRefreshToken(refreshToken);
+        String accessToken = request.getHeader("Authorization");
+        String refreshToken = request.getHeader("RefreshToken");
 
-        AuthLoginResponseDto token = authService.reissue(username);
+        if (accessToken == null || refreshToken == null) {
+            throw new IllegalArgumentException("토큰이 헤더에 포함되어 있지 않습니다.");
+        }
+
+        String accessTokenUsername = jwtUtil.getUsernameFromAccessToken(accessToken);
+        String refreshTokenUsername = jwtUtil.getUsernameFromRefreshToken(refreshToken);
+
+        if(!accessTokenUsername.equals(refreshTokenUsername)){
+            throw new IllegalArgumentException("AccessToken 과 RefreshToken 의 사용자가 일치하지 않습니다..");
+        }
+
+        AuthLoginResponseDto token = authService.reissue(refreshTokenUsername);
 
         return ResponseEntity.ok(token);
     }
