@@ -25,28 +25,16 @@ public class AuthController {
         String accessToken = request.getHeader("Authorization");
         String refreshToken = request.getHeader("RefreshToken");
 
-        if (accessToken == null || refreshToken == null) {
-            throw new IllegalArgumentException("토큰이 헤더에 포함되어 있지 않습니다.");
-        }
+        authService.validateHeaderTokens(accessToken, refreshToken);
 
         String accessTokenUsername = jwtUtil.getUsernameFromAccessToken(accessToken);
         String refreshTokenUsername = jwtUtil.getUsernameFromRefreshToken(refreshToken);
 
-        if(!accessTokenUsername.equals(refreshTokenUsername)){
-            throw new IllegalArgumentException("AccessToken 과 RefreshToken 의 사용자가 일치하지 않습니다..");
-        }
+        authService.validateUsernameMatch(accessTokenUsername, refreshTokenUsername);
 
         AuthLoginResponseDto token = authService.reissue(refreshTokenUsername);
 
-        accessToken = accessToken.replace("Bearer ", "");
-        long accessTokenExpiration = jwtUtil.getAccessTokenExpiration(accessToken);
-
-        authService.blacklistToken(accessToken, accessTokenExpiration);
-
-        refreshToken = refreshToken.replace("Bearer ", "");
-        long refreshTokenExpiration = jwtUtil.getRefreshTokenExpiration(refreshToken);
-
-        authService.blacklistToken(refreshToken, refreshTokenExpiration);
+        authService.blacklistTokens(accessToken, refreshToken);
 
         return ResponseEntity.ok(token);
     }

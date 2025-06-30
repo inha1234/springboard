@@ -56,4 +56,27 @@ public class AuthService {
     public boolean isBlacklisted(String token) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
+
+    public void validateHeaderTokens(String accessToken, String refreshToken) {
+        if (accessToken == null || refreshToken == null) {
+            throw new IllegalArgumentException("토큰이 헤더에 포함되어 있지 않습니다.");
+        }
+    }
+
+    public void validateUsernameMatch(String accessUser, String refreshUser) {
+        if (!accessUser.equals(refreshUser)) {
+            throw new IllegalArgumentException("AccessToken 과 RefreshToken 의 사용자가 일치하지 않습니다.");
+        }
+    }
+
+    public void blacklistTokens(String accessToken, String refreshToken) {
+        accessToken = accessToken.replace("Bearer ", "");
+        refreshToken = refreshToken.replace("Bearer ", "");
+
+        long accessTokenExpiration = jwtUtil.getAccessTokenExpiration(accessToken);
+        long refreshTokenExpiration = jwtUtil.getRefreshTokenExpiration(refreshToken);
+
+        blacklistToken(accessToken, accessTokenExpiration);
+        blacklistToken(refreshToken, refreshTokenExpiration);
+    }
 }
