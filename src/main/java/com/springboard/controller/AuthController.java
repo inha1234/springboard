@@ -48,13 +48,14 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        jwtUtil.getUsernameFromAccessToken(token);
+        String accessToken = request.getHeader("Authorization");
+        String refreshToken = request.getHeader("RefreshToken");
 
-        token = token.replace("Bearer ", "");
-        long expiration = jwtUtil.getAccessTokenExpiration(token);
-
-        authService.blacklistToken(token, expiration);
+        if (accessToken != null || refreshToken != null) {
+            authService.blacklistTokens(accessToken, refreshToken);
+        } else{
+            throw new IllegalArgumentException("토큰이 헤더에 포함되어 있지 않습니다.");
+        }
 
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }

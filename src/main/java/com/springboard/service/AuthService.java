@@ -48,8 +48,15 @@ public class AuthService {
         return new AuthLoginResponseDto(newAccessToken, newRefreshToken);
     }
 
-    public void blacklistToken(String token, long expirationMillis) {
-        redisTemplate.opsForValue().set(token, "blacklisted", expirationMillis, TimeUnit.MILLISECONDS);
+    public void blacklistToken(String token) {
+        token = token.replace("Bearer ", "");
+        long expiration = jwtUtil.getAccessTokenExpiration(token);
+
+        redisTemplate.opsForValue().set(token, "blacklisted", expiration, TimeUnit.MILLISECONDS);
+    }
+
+    public void blacklistToken(String token, Long expiration) {
+        redisTemplate.opsForValue().set(token, "blacklisted", expiration, TimeUnit.MILLISECONDS);
     }
 
 
@@ -70,13 +77,16 @@ public class AuthService {
     }
 
     public void blacklistTokens(String accessToken, String refreshToken) {
-        accessToken = accessToken.replace("Bearer ", "");
-        refreshToken = refreshToken.replace("Bearer ", "");
+        if (accessToken != null) {
+            accessToken = accessToken.replace("Bearer ", "");
+            long accessTokenExpiration = jwtUtil.getAccessTokenExpiration(accessToken);
+            blacklistToken(accessToken, accessTokenExpiration);
+        }
 
-        long accessTokenExpiration = jwtUtil.getAccessTokenExpiration(accessToken);
-        long refreshTokenExpiration = jwtUtil.getRefreshTokenExpiration(refreshToken);
-
-        blacklistToken(accessToken, accessTokenExpiration);
-        blacklistToken(refreshToken, refreshTokenExpiration);
+        if (refreshToken != null) {
+            refreshToken = refreshToken.replace("Bearer ", "");
+            long refreshTokenExpiration = jwtUtil.getRefreshTokenExpiration(refreshToken);
+            blacklistToken(refreshToken, refreshTokenExpiration);
+        }
     }
 }
