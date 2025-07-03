@@ -3,6 +3,7 @@ package com.springboard.service;
 import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
 import com.springboard.entity.User;
+import com.springboard.exception.custom.TokenMismatchException;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +73,7 @@ public class AuthService {
 
     public void validateUsernameMatch(String accessUser, String refreshUser) {
         if (!accessUser.equals(refreshUser)) {
-            throw new IllegalArgumentException("AccessToken 과 RefreshToken 의 사용자가 일치하지 않습니다.");
+            throw new TokenMismatchException();
         }
     }
 
