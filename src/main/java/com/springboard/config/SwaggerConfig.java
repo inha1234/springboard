@@ -16,19 +16,23 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
+                .info(new Info()
+                        .title("SpringBoard API")
+                        .version("1.0")
+                        .description("JWT 기반 인증을 위한 Swagger 문서입니다."))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("AccessToken")
+                        .addList("RefreshToken"))
                 .components(new Components()
                         .addSecuritySchemes("AccessToken", new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
                                 .name("Authorization")
-                                .description("Access Token 입력 (Bearer 포함)"))
+                                .description("Access Token 입력 (예: Bearer eyJ...)"))
                         .addSecuritySchemes("RefreshToken", new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)
                                 .name("RefreshToken")
-                                .description("Refresh Token 입력")))
-                .addSecurityItem(new SecurityRequirement()
-                        .addList("AccessToken")
-                        .addList("RefreshToken"));
+                                .description("Refresh Token 입력 (예: Bearer eyJ...)")));
     }
 }
