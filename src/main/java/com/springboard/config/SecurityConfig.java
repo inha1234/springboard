@@ -3,7 +3,6 @@ package com.springboard.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,12 +21,15 @@ public class SecurityConfig {
                 .and()
                 .cors()
                 .and()
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .anyRequest().authenticated()
-                )
-//                .anyRequest().permitAll() // 임시: 모든 경로 허용 (나중에 수정 가능)
-//                .and()
+                .authorizeHttpRequests()
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/h2-console/**"
+                ).permitAll()
+                .anyRequest().permitAll() // 임시: 모든 경로 허용 (나중에 수정 가능)
+                .and()
                 .formLogin().disable(); // 기본 로그인 폼 비활성화 (원하면 유지 가능)
 
         return http.build();
