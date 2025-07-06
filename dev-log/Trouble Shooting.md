@@ -369,3 +369,43 @@ dtoMap에 없는 상태인데 parentDto.addChild()를 호출했기 때문에 발
 
 ### 💡 날짜
 - 2025-07-03
+
+----
+
+## 에러일지
+
+### 📌 작업 내용
+- 스웨거 UI 에러 핸들러 애너테이션 적용시 에러뜨는 문제 해결
+
+### 🛠 문제 발생
+- 에러 핸들러에 @RestControllerAdvice 해당 애너테이션 사용 시 스웨거 UI 접속 시
+
+```
+Failed to Load API definition.
+errors
+Faetch error
+response status is 500 /v3/api-docs
+```
+라는 문구가 뜨면서 접속이 안되던 에러가 있었음
+
+### ✅ 문제 해결
+- build.gradle를
+````
+'org.springframework.boot' version '3.4.4'
+id 'io.spring.dependency-management' version '1.1.7'
+````
+에서
+````
+'org.springframework.boot' version '3.3.1'
+id 'io.spring.dependency-management' version '1.1.5'
+````
+로 수정하니깐 에러가 해결됨
+````
+해당 에러 참고 글 : 
+https://dev-meung.tistory.com/entry/%ED%95%B4%EC%BB%A4%ED%86%A4-HY-THON-%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85-Swagger-500-%EC%97%90%EB%9F%AC-Failed-to-load-API-definition
+에서 두번쨰 해결방안을 적용함
+````
+
+### 💡 날짜
+- 2025-07-06
+
