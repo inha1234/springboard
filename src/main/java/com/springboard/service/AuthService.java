@@ -3,7 +3,10 @@ package com.springboard.service;
 import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
 import com.springboard.entity.User;
+import com.springboard.exception.custom.InvalidUserInformationException;
 import com.springboard.exception.custom.TokenMismatchException;
+import com.springboard.exception.custom.TokenNotFoundException;
+import com.springboard.exception.custom.UserNotFoundException;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public AuthLoginResponseDto login(AuthLoginRequestDto dto) {
         User user = userRepository.findByUsernameAndIsDeletedFalse(dto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+                .orElseThrow(() -> new UserNotFoundException());
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
@@ -41,7 +44,7 @@ public class AuthService {
     @Transactional
     public AuthLoginResponseDto reissue(String username) {
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("유저 정보가 유효하지 않습니다."));
+                .orElseThrow(() -> new InvalidUserInformationException());
 
         String newAccessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getNickname());
         String newRefreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
@@ -67,7 +70,7 @@ public class AuthService {
 
     public void validateHeaderTokens(String accessToken, String refreshToken) {
         if (accessToken == null || refreshToken == null) {
-            throw new IllegalArgumentException("토큰이 헤더에 포함되어 있지 않습니다.");
+            throw new TokenNotFoundException();
         }
     }
 
