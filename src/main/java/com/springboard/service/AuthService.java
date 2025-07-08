@@ -3,10 +3,7 @@ package com.springboard.service;
 import com.springboard.dto.auth.AuthLoginRequestDto;
 import com.springboard.dto.auth.AuthLoginResponseDto;
 import com.springboard.entity.User;
-import com.springboard.exception.custom.InvalidUserInformationException;
-import com.springboard.exception.custom.TokenMismatchException;
-import com.springboard.exception.custom.TokenNotFoundException;
-import com.springboard.exception.custom.UserNotFoundException;
+import com.springboard.exception.custom.*;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +28,7 @@ public class AuthService {
                 .orElseThrow(() -> new UserNotFoundException());
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordMismatchException();
         }
         String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user.getNickname());
         String refreshToken = jwtUtil.generateRefreshToken(user.getUsername(), user.getNickname());
