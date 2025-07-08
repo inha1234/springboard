@@ -1,4 +1,4 @@
-package com.springboard.exception.custom;
+package com.springboard.exception.custom.user;
 
 import com.springboard.exception.BusinessException;
 import com.springboard.exception.ErrorCode;

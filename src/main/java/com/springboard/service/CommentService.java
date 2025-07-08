@@ -6,6 +6,9 @@ import com.springboard.dto.comment.CommentUpdateRequestDto;
 import com.springboard.entity.Comment;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
+import com.springboard.exception.custom.comment.*;
+import com.springboard.exception.custom.post.PostNotFoundException;
+import com.springboard.exception.custom.user.UserNotFoundException;
 import com.springboard.repository.CommentRepository;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
@@ -28,15 +31,15 @@ public class CommentService {
     @Transactional
     public CommentResponseDto createComment(Long postId, CommentCreateRequestDto dto, String username){
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(()-> new IllegalArgumentException("작성자를 찾을 수 없습니다."));
+                .orElseThrow(()-> new UserNotFoundException());
 
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         Comment parent = null;
         if (dto.getParentId() != null && dto.getParentId() > 0) {
             parent = commentRepository.findById(dto.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글이 존재하지 않습니다."));
+                    .orElseThrow(() -> new ParentCommentNotFoundException());
         }
 
         Comment comment = new Comment();
@@ -53,7 +56,7 @@ public class CommentService {
     @Transactional
     public List<CommentResponseDto> getComment(Long postId){
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         List<Comment> comments = commentRepository.findByPost(post);
 
@@ -81,14 +84,14 @@ public class CommentService {
     @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto dto, String username){
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
+                .orElseThrow(()->new CommentNotFoundException());
 
         if(comment.isDeleted()){
-            throw new IllegalStateException("삭제된 댓글은 수정할 수 없습니다.");
+            throw new CommentAlreadyDeletedException();
         }
 
         if(!comment.getUser().getUsername().equals(username)){
-            throw new IllegalArgumentException("작성자만 댓글을 수정할 수 있습니다.");
+            throw new CommentUpdateForbiddenException();
         }
 
         comment.setContent(dto.getContent());
@@ -98,10 +101,10 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, String username){
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(()->new IllegalArgumentException("댓글이 존재하지 않습니다."));
+                .orElseThrow(()->new CommentNotFoundException());
 
         if(!comment.getUser().getUsername().equals(username)){
-            throw new IllegalArgumentException("작성자만 댓글을 삭제할 수 있습니다.");
+            throw new CommentDeleteForbiddenException();
         }
 
         comment.setDeleted(true);
