@@ -3,6 +3,10 @@ package com.springboard.service;
 import com.springboard.entity.Post;
 import com.springboard.entity.PostLike;
 import com.springboard.entity.User;
+import com.springboard.exception.custom.post.PostNotFoundException;
+import com.springboard.exception.custom.postlike.AlreadyLikedException;
+import com.springboard.exception.custom.postlike.LikeNotFoundException;
+import com.springboard.exception.custom.user.UserNotFoundException;
 import com.springboard.repository.PostLikeRepository;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
@@ -21,13 +25,13 @@ public class PostLikeService {
     @Transactional
     public void likePost(Long postId, String username) {
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new UserNotFoundException());
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         boolean alreadyLiked = postLikeRepository.existsByPostAndUser(post, user);
         if (alreadyLiked) {
-            throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
+            throw new AlreadyLikedException();
         }
 
         PostLike like = new PostLike(post, user);
@@ -39,12 +43,12 @@ public class PostLikeService {
     @Transactional
     public void unLikePost(Long postId, String username) {
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new UserNotFoundException());
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         PostLike postLike = postLikeRepository.findByPostAndUser(post, user)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글에 대한 좋아요 기록이 없습니다."));
+                .orElseThrow(() -> new LikeNotFoundException());
 
         postLikeRepository.delete(postLike);
     }
