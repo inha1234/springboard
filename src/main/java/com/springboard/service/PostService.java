@@ -6,6 +6,10 @@ import com.springboard.dto.post.PostResponseDto;
 import com.springboard.dto.post.PostUpdateRequestDto;
 import com.springboard.entity.Post;
 import com.springboard.entity.User;
+import com.springboard.exception.custom.comment.CommentDeleteForbiddenException;
+import com.springboard.exception.custom.comment.CommentUpdateForbiddenException;
+import com.springboard.exception.custom.post.PostNotFoundException;
+import com.springboard.exception.custom.user.UserNotFoundException;
 import com.springboard.repository.PostLikeRepository;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
@@ -28,7 +32,7 @@ public class PostService {
     @Transactional
     public PostResponseDto createPost(PostCreateRequestDto dto, String username){
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("작성자 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException());
 
         Post post = new Post();
         post.setTitle(dto.getTitle());
@@ -44,10 +48,10 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponseDto getPost(Long postId, String username) {
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
         if(username!=null){
             User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                    .orElseThrow(() -> new UserNotFoundException());
             post.setLiked(postLikeRepository.existsByPostAndUser(post, user));
         }
         return new PostResponseDto(post);
@@ -67,10 +71,10 @@ public class PostService {
     @Transactional
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, String username){
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         if (!post.getUser().getUsername().equals(username)) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+            throw new CommentUpdateForbiddenException();
         }
 
         post.setTitle(dto.getTitle());
@@ -83,10 +87,10 @@ public class PostService {
     @Transactional
     public void deletePost(Long postId, String username){
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         if (!post.getUser().getUsername().equals(username)) {
-            throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
+            throw new CommentDeleteForbiddenException();
         }
         post.setDeleted(true);
     }
@@ -94,7 +98,7 @@ public class PostService {
     @Transactional
     public void postLikeCount(Long postId, Long postLikeCount){
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
+                .orElseThrow(() -> new PostNotFoundException());
 
         post.setPostLikeCount(postLikeCount);
 
