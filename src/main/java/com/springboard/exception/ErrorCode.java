@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
     USER_NOT_FOUND("USER_NOT_FOUND", "해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    DUPLICATE_NICKNAME("DUPLICATE_NICKNAME", "이미 존재하는 닉네임입니다.", HttpStatus.BAD_REQUEST),
     INVALID_USER_INFORMATION("INVALID_USER_INFORMATION", "유저 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
     PASSWORD_MISMATCH("PASSWORD_MISMATCH", "비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
     POST_NOT_FOUND("POST_NOT_FOUND", "해당 게시글이 존재하지 않거나 삭제된 게시글입니다.", HttpStatus.NOT_FOUND),

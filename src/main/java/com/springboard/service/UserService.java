@@ -7,6 +7,8 @@ import com.springboard.dto.user.UserPasswordChangeDto;
 import com.springboard.dto.user.UserProfileResponseDto;
 import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
+import com.springboard.exception.custom.user.DuplicateNicknameException;
+import com.springboard.exception.custom.user.UserNotFoundException;
 import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
 import com.springboard.entity.User;
@@ -27,7 +29,7 @@ public class UserService {
 
         userRepository.findByNicknameAndIsDeletedFalse(dto.getNickname())
                 .ifPresent(user -> {
-                    throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+                    throw new DuplicateNicknameException();
                 });
 
         User user = new User();
@@ -41,7 +43,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserProfileResponseDto getUserProfile(Long userId) {
         User user = userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserNotFoundException());
 
         return new UserProfileResponseDto(user);
     }
@@ -50,11 +52,11 @@ public class UserService {
     public void updateProfile(String username, UserProfileUpdateRequestDto dto){
         userRepository.findByNicknameAndIsDeletedFalse(dto.getNickname())
                 .ifPresent(otherUser -> {
-                    throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+                    throw new DuplicateNicknameException();
                 });
 
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserNotFoundException());
 
         user.setNickname(dto.getNickname());
 
@@ -63,7 +65,7 @@ public class UserService {
     @Transactional
     public void changePassword(String username, UserPasswordChangeDto dto){
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+                .orElseThrow(() -> new UserNotFoundException());
 
         String encoded = passwordEncoder.encode(dto.getPassword());
         user.setPassword(encoded);
@@ -73,7 +75,7 @@ public class UserService {
     @Transactional
     public void withdraw(String username) {
         User user = userRepository.findByUsernameAndIsDeletedFalse(username)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException());
 
         user.setDeleted(true);
     }
