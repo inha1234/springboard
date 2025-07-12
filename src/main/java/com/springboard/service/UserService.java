@@ -1,17 +1,13 @@
 package com.springboard.service;
 
-import com.springboard.dto.auth.AuthLoginRequestDto;
-import com.springboard.dto.auth.AuthLoginResponseDto;
-import com.springboard.dto.post.PostCreateRequestDto;
 import com.springboard.dto.user.UserPasswordChangeDto;
 import com.springboard.dto.user.UserProfileResponseDto;
 import com.springboard.dto.user.UserProfileUpdateRequestDto;
 import com.springboard.dto.user.UserSignupDto;
+import com.springboard.entity.User;
 import com.springboard.exception.custom.user.DuplicateNicknameException;
 import com.springboard.exception.custom.user.UserNotFoundException;
-import com.springboard.jwt.JwtUtil;
 import com.springboard.repository.UserRepository;
-import com.springboard.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
 
     @Transactional
     public void signup(UserSignupDto dto) {
