@@ -409,3 +409,64 @@ https://dev-meung.tistory.com/entry/%ED%95%B4%EC%BB%A4%ED%86%A4-HY-THON-%ED%8A%B
 ### 💡 날짜
 - 2025-07-06
 
+----
+
+## 에러일지
+
+### 📌 작업 내용
+- 블랙리스트 기능 구현
+
+### 🛠 문제 발생
+- JwtAuthenticationFilter 를 구현하고 시큐리티 컨피그에서 필터를 적용하니
+  스웨거가 정상 작동하지 않는 문제
+
+### ✅ 문제 해결
+- 토큰이 null인 경우 그냥 통과하게함.
+
+### 💡 날짜
+- 2025-07-13
+
+----
+
+## 에러일지
+
+### 📌 작업 내용
+- 블래기스트 기능 필터
+
+### 🛠 문제 발생
+- 로그아웃기능으로 토큰을 블랙리스트에 정상 등록하였는데, 해당 토큰을 검증하는
+  과정을 필터에서 정상적으로 걸러내지않음
+
+### ✅ 문제 해결
+- 
+필터에서
+````
+System.out.println("Authorization Header: " + request.getHeader("Authorization"));
+````
+로 해더에 토큰이 정상적으로 들어오는가 확인하는 과정을 거치는 도중
+
+```
+Authorization Header: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdHJpbmciLCJuaWNrbmFtZSI6InN0cmluZyIsInR5cGUiOiJhY2Nlc3MiLCJleHAiOjE3NTI0OTc3NTF9.XDNJmt6OCEL5zEZyweUm5FLGmksuqclb1-ta7nj12y4
+```
+로 찍히는 걸로 확인되어
+````
+public String resolveToken(HttpServletRequest request) {
+    String bearerToken = request.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        return bearerToken.substring(7);
+    }
+    return null;
+}
+````
+에서 startWith("Bearer ") 확인하는 로직을
+````
+    if (bearerToken.startsWith("Bearer ")) {
+        return bearerToken.substring(7);
+    } else {
+        return bearerToken;
+    }
+````
+로 변경하니 정상적으로 토큰을 블랙리스트 등록하니 해당 토큰을 검증하는 필터가 정상적으로
+작동하게됨
+### 💡 날짜
+- 2025-07-14
