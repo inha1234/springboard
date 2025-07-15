@@ -1,5 +1,7 @@
 package com.springboard.jwt;
 
+import com.springboard.exception.custom.user.UserNotFoundException;
+import com.springboard.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -16,10 +18,12 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, RedisTemplate<String, String> redisTemplate) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, RedisTemplate<String, String> redisTemplate, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.redisTemplate = redisTemplate;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -34,11 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String username = jwtUtil.getUsernameFromAccessToken(accessToken);
+            userRepository.findByUsernameAndIsDeletedFalse(username)
+                    .orElseThrow(() -> new UserNotFoundException());
             accessToken = accessToken.replace("Bearer ", "");
             String blacklistKey = "BL:" + accessToken;
             String isBlacklisted = redisTemplate.opsForValue().get(blacklistKey);
-            System.out.println(">>> Redis result = " + isBlacklisted);
-            System.out.println(">>> blacklistKey = " + blacklistKey);
             if (isBlacklisted != null) {
                 throw new JwtException("블랙리스트 토큰입니다.");
             }
