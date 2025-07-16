@@ -53,23 +53,11 @@ public class AuthService {
         return new AuthLoginResponseDto(newAccessToken, newRefreshToken);
     }
 
-//    public void blacklistToken(String token) {
-//        token = token.replace("Bearer ", "");
-//        long expiration = jwtUtil.getAccessTokenExpiration(token);
-//
-//        redisTemplate.opsForValue().set(token, "blacklisted", expiration, TimeUnit.MILLISECONDS);
-//    }
-
     public void blacklistToken(String token, Long expiration) {
         if(expiration > 0){
             String redisKey = "BL:" + token;
             redisTemplate.opsForValue().set(redisKey, "blacklisted", expiration, TimeUnit.MILLISECONDS);
         }
-    }
-
-
-    public boolean isBlacklisted(String token) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(token));
     }
 
     public void validateHeaderTokens(String accessToken, String refreshToken) {
