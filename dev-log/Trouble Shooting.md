@@ -470,3 +470,21 @@ public String resolveToken(HttpServletRequest request) {
 작동하게됨
 ### 💡 날짜
 - 2025-07-14
+- 
+----
+
+## 에러일지
+
+### 📌 작업 내용
+- mysql DB 연결
+
+### 🛠 문제 발생
+- db 연결 작업 도중 에러가 계속해서 발생
+
+### ✅ 문제 해결
+- 알고보니 build.gradle에 mysql 관련이 두줄 있었고
+  yml에도 h2와 mysql 같은 내용이 한 파트에 있었음
+  해당내용 수정과 url 파라미터 허용을 해주니 MYSQL DB가 정상 연결됨
+
+### 💡 날짜
+- 2025-08-06
