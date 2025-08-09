@@ -17,7 +17,9 @@ public enum ErrorCode {
     LIKE_NOT_FOUND("LIKE_NOT_FOUND", "해당 게시글에 대한 좋아요 기록이 없습니다.", HttpStatus.BAD_REQUEST),
     TOKEN_NOT_FOUND("TOKEN_NOT_FOUND", "토큰이 헤더에 포함되어 있지 않습니다.", HttpStatus.UNAUTHORIZED),
     TOKEN_MISMATCH("TOKEN_MISMATCH", "AccessToken과 RefreshToken 사용자가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
-    INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR("INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    UNAUTHORIZED("UNAUTHORIZED", "인증이 필요합니다.", HttpStatus.UNAUTHORIZED),
+    FORBIDDEN("FORBIDDEN", "접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
 
     private final String code;
     private final String message;

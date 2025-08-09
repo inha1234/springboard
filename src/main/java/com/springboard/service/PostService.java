@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,13 +70,10 @@ public class PostService {
 
     //게시글 수정
     @Transactional
+    @PreAuthorize("@ownershipGuard.postOwner(#postId, authentication)")
     public PostResponseDto updatePost(Long postId, PostUpdateRequestDto dto, String username){
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new PostNotFoundException());
-
-        if (!post.getUser().getUsername().equals(username)) {
-            throw new CommentUpdateForbiddenException();
-        }
 
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
@@ -85,13 +83,11 @@ public class PostService {
 
     //게시글 삭제
     @Transactional
+    @PreAuthorize("@ownershipGuard.postOwner(#postId, authentication)")
     public void deletePost(Long postId, String username){
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new PostNotFoundException());
 
-        if (!post.getUser().getUsername().equals(username)) {
-            throw new CommentDeleteForbiddenException();
-        }
         post.setDeleted(true);
     }
 

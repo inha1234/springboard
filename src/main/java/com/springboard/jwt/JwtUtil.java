@@ -67,16 +67,6 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    //토큰에서 유저 닉네임 추출
-    public String getNicknameFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(accessKey)
-                .build()
-                .parseClaimsJws(token.replace("Bearer ", ""))
-                .getBody()
-                .get("nickname", String.class);
-    }
-
     public long getAccessTokenExpiration(String token) {
         Date expiration = Jwts.parserBuilder()
                 .setSigningKey(accessKey)

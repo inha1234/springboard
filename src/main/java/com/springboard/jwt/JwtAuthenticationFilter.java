@@ -2,6 +2,7 @@ package com.springboard.jwt;
 
 import com.springboard.exception.custom.user.UserNotFoundException;
 import com.springboard.repository.UserRepository;
+import com.springboard.security.AuthUser;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -9,10 +10,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -46,6 +52,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (isBlacklisted != null) {
                 throw new JwtException("블랙리스트 토큰입니다.");
             }
+
+            var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            var principal = new AuthUser(username, authorities);
+            var authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (ExpiredJwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

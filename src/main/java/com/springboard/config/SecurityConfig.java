@@ -1,6 +1,8 @@
 package com.springboard.config;
 
 import com.springboard.jwt.JwtAuthenticationFilter;
+import com.springboard.security.CustomAccessDeniedHandler;
+import com.springboard.security.CustomAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,8 +37,12 @@ public class SecurityConfig {
                         "/swagger-resources/**",
                         "/h2-console/**"
                 ).permitAll()
-                .anyRequest().permitAll() // 임시: 모든 경로 허용 (나중에 수정 가능)
+                .anyRequest().authenticated()
                 .and()
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 401
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())           // 403
+                )
                 .formLogin().disable() // 기본 로그인 폼 비활성화 (원하면 유지 가능)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

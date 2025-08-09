@@ -13,6 +13,7 @@ import com.springboard.repository.CommentRepository;
 import com.springboard.repository.PostRepository;
 import com.springboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,6 +83,7 @@ public class CommentService {
     }
 
     @Transactional
+    @PreAuthorize("@ownershipGuard.commentOwner(#commentId, authentication)")
     public CommentResponseDto updateComment(Long commentId, CommentUpdateRequestDto dto, String username){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()->new CommentNotFoundException());
@@ -90,22 +92,15 @@ public class CommentService {
             throw new CommentAlreadyDeletedException();
         }
 
-        if(!comment.getUser().getUsername().equals(username)){
-            throw new CommentUpdateForbiddenException();
-        }
-
         comment.setContent(dto.getContent());
         return new CommentResponseDto(comment);
     }
 
     @Transactional
+    @PreAuthorize("@ownershipGuard.commentOwner(#commentId, authentication)")
     public void deleteComment(Long commentId, String username){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(()->new CommentNotFoundException());
-
-        if(!comment.getUser().getUsername().equals(username)){
-            throw new CommentDeleteForbiddenException();
-        }
 
         comment.setDeleted(true);
     }
