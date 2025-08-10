@@ -10,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String blacklistKey = "BL:" + accessToken;
             String isBlacklisted = redisTemplate.opsForValue().get(blacklistKey);
             if (isBlacklisted != null) {
-                throw new JwtException("블랙리스트 토큰입니다.");
+                throw new InsufficientAuthenticationException("블랙리스트 토큰입니다.");
             }
 
             var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -60,13 +62,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("AccessToken이 만료되었습니다.");
-            return;
+            SecurityContextHolder.clearContext();
+            throw new InsufficientAuthenticationException("AccessToken이 만료되었습니다.", e);
         } catch (JwtException e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("유효하지 않은 토큰입니다.");
-            return;
+            SecurityContextHolder.clearContext();
+            throw new BadCredentialsException("유효하지 않은 토큰입니다.", e);
         }
 
         filterChain.doFilter(request, response);
