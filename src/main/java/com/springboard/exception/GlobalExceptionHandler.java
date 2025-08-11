@@ -22,4 +22,21 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
+    //403
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of(ErrorCode.FORBIDDEN));
+    }
+
+    //401
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuth(
+            org.springframework.security.core.AuthenticationException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of(ErrorCode.UNAUTHORIZED));
+    }
 }
